@@ -46,6 +46,7 @@ from pymongo import (database,
                      helpers,
                      message)
 from pymongo.cursor_manager import CursorManager
+from pymongo.decorators import reconnect
 from pymongo.errors import (AutoReconnect,
                             ConfigurationError,
                             ConnectionFailure,
@@ -565,6 +566,7 @@ class Connection(object):  # TODO support auth for pooling
             self.end_request()
             return None
 
+    @reconnect
     def __find_master(self):
         """Create a new socket and use it to figure out who the master is.
 
@@ -742,6 +744,7 @@ class Connection(object):  # TODO support auth for pooling
             # don't include BSON documents.
             return message
 
+    @reconnect
     def _send_message(self, message, with_last_error=False):
         """Say something to Mongo.
 
@@ -810,6 +813,7 @@ class Connection(object):  # TODO support auth for pooling
 
     # we just ignore _must_use_master here: it's only relevant for
     # MasterSlaveConnection instances.
+    @reconnect
     def _send_message_with_response(self, message,
                                     _must_use_master=False, **kwargs):
         """Send a message to Mongo and return the response.
